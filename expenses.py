@@ -25,7 +25,7 @@ class Expenses():
         }
         try:
             # open and read the file and convert json to dict
-            file = open('expenses.txt', 'r+')
+            file = open('./Data/expenses.txt', 'r+')
             jsonText = file.read()
             expenses = json.loads(jsonText) if jsonText else {}
             # make a new item with a new id
@@ -42,7 +42,7 @@ class Expenses():
             file.close()
             return new_id
         except FileNotFoundError:
-            with open("expenses.txt", 'w') as file:
+            with open("./Data/expenses.txt", 'w') as file:
                 expenses = {"1": expense_data}
                 file.write(json.dumps(expenses, indent=2))
             return "1"
@@ -52,7 +52,7 @@ class Expenses():
 def updateExpense(id, updateValue):
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r+')
+        file = open('./Data/expenses.txt', 'r+')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         foundId = False
@@ -95,7 +95,7 @@ def updateExpense(id, updateValue):
 def deleteExpense(id):
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r+')
+        file = open('./Data/expenses.txt', 'r+')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         foundId = False
@@ -124,11 +124,11 @@ def deleteExpense(id):
 def viewAllExpenses():
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
-        for key, value in expenses.items():
-            print(f"Expense {key}, description: {value['description']}, amount: {value['amount']}, created at: {value['date']}, category: {value['category']}")
+        return expenses
+        
 
     except FileNotFoundError:
         print("No Expenses found, please add expenses first")
@@ -137,13 +137,13 @@ def viewAllExpenses():
 def allExpensesSummary():
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         totalAmount = 0
         for value in expenses.values():
             totalAmount = totalAmount + value['amount']
-        print(f"Total Expenses: ${totalAmount}")
+        return totalAmount
 
     except FileNotFoundError:
         print("No Expenses found, please add expenses first")
@@ -153,7 +153,7 @@ def monthExpensesSummary(month):
     currentYear = datetime.datetime.now().year
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         totalAmount = 0
@@ -181,7 +181,7 @@ def monthExpensesSummary(month):
             "11" : "November",
             "12" : "December"
         }
-        print(f"Total Expenses for {months[str(month)]}: ${totalAmount}")
+        return totalAmount, months[str(month)]
 
     except FileNotFoundError:
         print("No Expenses found, please add expenses first")
@@ -190,14 +190,16 @@ def monthExpensesSummary(month):
 def filterByCategory(categoryFilter):
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
+        filtered_expenses = {}
         for key, value in expenses.items():
             if value['category'].lower() == categoryFilter.lower():
-                print(f"Expense {key}, description: {value['description']}, amount: {value['amount']}, created at: {value['date']}, category: {value['category']}")
+                filtered_expenses[key] = value
             else:
                 pass
+        return filtered_expenses
 
     except FileNotFoundError:
         print("No Expenses found, please add expenses first")
@@ -206,7 +208,7 @@ def filterByCategory(categoryFilter):
 def summaryByCategory(categoryFilter):
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         totalAmount = 0
@@ -215,7 +217,8 @@ def summaryByCategory(categoryFilter):
                 totalAmount = totalAmount + value['amount']
             else:
                 pass
-        print(f"Total Expenses for {categoryFilter}: ${totalAmount}")   
+        return totalAmount
+         
     except FileNotFoundError:
         print("No Expenses found, please add expenses first")
 
@@ -224,7 +227,7 @@ def checkMonthlyBudget(budget, month):
     currentYear = datetime.datetime.now().year
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         totalAmount = 0
@@ -253,12 +256,13 @@ def checkMonthlyBudget(budget, month):
             "12" : "December"
         }
         if totalAmount > budget:
-            print(f"Warning! Total Expenses for {months[str(month)]}: ${totalAmount} exceeds your budget.")
+            result = f"Warning! Total Expenses for {months[str(month)]}: ${totalAmount} exceeds your budget."
         elif totalAmount == budget:
-            print(f"No more spending! Total Expenses for {months[str(month)]}: ${totalAmount} is exactly equal to your budget.")
+            result = f"No more spending! Total Expenses for {months[str(month)]}: ${totalAmount} is exactly equal to your budget."
         else:
-            print(f"It's fine! Total Expenses for {months[str(month)]}: ${totalAmount} is lower than your budget.")
-
+            result = f"It's fine! Total Expenses for {months[str(month)]}: ${totalAmount} is lower than your budget."
+        return result
+    
     except FileNotFoundError:
         print("No Expenses found, please add expenses first")
 
@@ -266,11 +270,11 @@ def checkMonthlyBudget(budget, month):
 def exportToCSV():
     try:
         # open and read the file and convert json to dict
-        file = open('expenses.txt', 'r')
+        file = open('./Data/expenses.txt', 'r')
         jsonText = file.read()
         expenses = json.loads(jsonText) if jsonText else {}
         
-        csvFile = open("expenses.csv", 'w', newline='')
+        csvFile = open("./Data/expenses.csv", 'w', newline='')
         fieldNames = ['id', 'description', 'amount', 'date', 'category']
         writer = csv.DictWriter(csvFile, fieldnames=fieldNames)
         writer.writeheader()

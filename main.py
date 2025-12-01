@@ -71,31 +71,39 @@ def main():
                 print("Invalid ID.")
 
         elif choice == "4":
-            viewAllExpenses()
+            expenses = viewAllExpenses()
+            for key, value in expenses.items():
+                print(f"Expense {key}, description: {value['description']}, amount: {value['amount']}, created at: {value['date']}, category: {value['category']}")
 
         elif choice == "5":
-            allExpensesSummary()
+            totalAmount = allExpensesSummary()
+            print(f"Total Expenses: ${totalAmount}")
 
         elif choice == "6":
             try:
                 month = int(input("Enter month number (1-12): "))
-                monthExpensesSummary(month)
+                totalAmount, month = monthExpensesSummary(month)
+                print(f"Total Expenses for {month}: ${totalAmount}")
             except ValueError:
                 print("Invalid month.")
 
         elif choice == "7":
             category = input("Enter category to filter: ")
-            filterByCategory(category)
+            filtered_expenses = filterByCategory(category)
+            for key, value in filtered_expenses.items():
+                print(f"Expense {key}, description: {value['description']}, amount: {value['amount']}, created at: {value['date']}, category: {value['category']}")
 
         elif choice == "8":
             category = input("Enter category: ")
-            summaryByCategory(category)
+            totalAmount = summaryByCategory(category)
+            print(f"Total Expenses for {category}: ${totalAmount}")  
 
         elif choice == "9":
             try:
                 month = int(input("Enter month number (1-12): "))
                 budget = int(input("Enter monthly budget: "))
-                checkMonthlyBudget(budget, month)
+                result = checkMonthlyBudget(budget, month)
+                print(result)
             except ValueError:
                 print("Invalid input.")
 
